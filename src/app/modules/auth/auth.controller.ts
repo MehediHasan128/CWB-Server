@@ -3,18 +3,17 @@ import CatchAsync from "../../utils/CatchAsync";
 import { SendResponce } from "../../utils/SendResponce";
 import { AuthServices } from "./auth.services";
 
-const UserSignUp = CatchAsync(async (req, res) => {
-    const result = await AuthServices.UserSignUpIntoBD(req.body)
+const userLogin = CatchAsync(async(req, res) => {
+    const result = await AuthServices.loginUser(req.body);
 
     SendResponce(res, {
-        success : true,
         statusCode : httpStatus.OK,
-        message : 'User sign up successfully',
-        data : result
+        success : true,
+        message : 'User is logged in succesfully!',
+        data : []
     })
 })
 
-
 export const AuthController = {
-    UserSignUp
+    userLogin
 }

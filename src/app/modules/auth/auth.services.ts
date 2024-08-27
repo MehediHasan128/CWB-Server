@@ -1,12 +1,16 @@
-import { TUserSignUp } from './auth.interface';
-import { User } from './auth.model';
+import httpStatus from "http-status";
+import AppError from "../../errors/AppError";
+import { User } from "../User/user.model";
+import { TUserLogin } from "./auth.interface";
 
-const UserSignUpIntoBD = async (payload: TUserSignUp) => {
-  const user = await User.create(payload);
-  const result = await User.findById(user._id).select('-password');
-  return result;
-};
+const loginUser = async(payload : TUserLogin) => {
+    const user = await User.isUserExistsByCustomId(payload.email);
+
+    if(!(await User.isPasswordMatched(payload?.password, user?.password))){
+        throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched')
+    }
+}
 
 export const AuthServices = {
-  UserSignUpIntoBD,
-};
+    loginUser
+}
