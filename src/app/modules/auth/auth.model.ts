@@ -1,5 +1,7 @@
+import bcrypt from 'bcrypt';
 import { model, Schema } from "mongoose";
 import { TUserSignUp } from "./auth.interface";
+import config from '../../config';
 
 const createUserSignUpSchema = new Schema<TUserSignUp>({
     name : {
@@ -30,6 +32,15 @@ const createUserSignUpSchema = new Schema<TUserSignUp>({
 },
 {
     timestamps : true
+})
+
+
+createUserSignUpSchema.pre('save', async function (next) {
+    const user = this;
+    user.password = await bcrypt.hash(
+        user.password, Number(config.bcrypt_salt_round)
+    );
+    next();
 })
 
 
