@@ -5,30 +5,31 @@ import { Slots } from './slot.model';
 const createSlotsIntoDB = async (payload: TSlot) => {
   const { serviceId, date, startTime, endTime } = payload;
 
+
   const service = await Services.findById(serviceId);
+  const slotDuration = service?.duration;
   const existSlot = await Slots.findOne({ serviceId, date });
   if (!existSlot) {
-    const slots: TSlot[] = [];
+    const slots : TSlot[] = [];
+  
+  let start = new Date(`${date} ${startTime}`);
+  const end = new Date(`${date} ${endTime}`);
 
-    const timeStart = parseInt(startTime.split(':')[0], 10);
-    const lastTime = parseInt(endTime.split(':')[0], 10);
+  while(start < end){
+    const nextSlot = new Date(start.getTime() + slotDuration! * 60 * 1000);
+    if(nextSlot > end) break;
 
-    for (let i = timeStart; i < lastTime; i++) {
-      const slotStartTime = `${i.toString().padStart(2, '0')}:00`;
-      const slotEndTime = `${(i + 1).toString().padStart(2, '0')}:00`;
+    slots.push({
+      serviceId,
+      date,
+      startTime: start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true}),
+      endTime: nextSlot.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true})
+    })
 
-      const newSlot = new Slots({
-        serviceId,
-        date,
-        startTime: slotStartTime,
-        endTime: slotEndTime,
-      });
-
-      const savedSlot = await newSlot.save();
-      slots.push(savedSlot);
-    }
-
-    return slots;
+    start = nextSlot;
+  }
+  const result = await Slots.create(slots);
+  return result
   } else {
     console.log('slot exist');
   }
