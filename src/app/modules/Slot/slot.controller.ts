@@ -14,6 +14,19 @@ const createSlot = CatchAsync(async (req, res) => {
   });
 });
 
+const slotBooking = CatchAsync(async(req, res) => {
+  const {id} = req.params;
+  const result = await SlotServices.bookedSlot(id);
+
+  SendResponce(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Slot booked',
+    data: result,
+  });
+})
+
 export const SlotController = {
   createSlot,
+  slotBooking
 };

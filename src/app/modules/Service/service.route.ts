@@ -7,6 +7,6 @@ router.post('/create-service', ServiceController.createService)
 router.get('/', ServiceController.getAllService)
 router.get('/:id', ServiceController.getSingleServiceById)
 router.put('/:id', ServiceController.updateService)
-router.delete('/:id', ServiceController.deleteService)
+router.put('/:id', ServiceController.deleteService)
 
 export const ServicesRouter = router

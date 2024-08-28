@@ -35,6 +35,12 @@ const createSlotsIntoDB = async (payload: TSlot) => {
   }
 };
 
+const bookedSlot = async (slotId : string) => {
+  const result = await Slots.findByIdAndUpdate(slotId, {isBooked: 'booked'}, {new: true});
+  return result
+}
+
 export const SlotServices = {
   createSlotsIntoDB,
+  bookedSlot
 };
